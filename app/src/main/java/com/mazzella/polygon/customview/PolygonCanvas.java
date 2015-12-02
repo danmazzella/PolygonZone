@@ -92,23 +92,23 @@ public class PolygonCanvas extends View {
         touchPoints.get(3).setOtherIds(edgeIdsArray, 7, 6);
 
         Point point12 = new Point();
-        point12.x = point2.x / 2;
+        point12.x = (point1.x + point2.x) / 2;
         point12.y = point1.y;
         touchPoints.add(4, new TouchPoint(context, R.drawable.square_touchpoint, point12, 4));
 
         Point point23 = new Point();
         point23.x = point2.x;
-        point23.y = this.h / 2 - point2.y;
+        point23.y = (point2.y + point3.y) / 2;
         touchPoints.add(5, new TouchPoint(context, R.drawable.square_touchpoint, point23, 5));
 
         Point point34 = new Point();
-        point34.x = this.w / 2;
+        point34.x = (point3.x + point4.x) / 2;
         point34.y = point4.y;
         touchPoints.add(6, new TouchPoint(context, R.drawable.square_touchpoint, point34, 6));
 
         Point point14 = new Point();
         point14.x = point1.x;
-        point14.y = this.h / 2 - point1.y;
+        point14.y = (point1.y + point4.y) / 2;
         touchPoints.add(7, new TouchPoint(context, R.drawable.square_touchpoint, point14, 7));
 
         areaFill = new Paint();
