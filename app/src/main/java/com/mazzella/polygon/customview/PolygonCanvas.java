@@ -24,6 +24,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -200,50 +201,74 @@ public class PolygonCanvas extends View {
                         }
 
                         if (diffX < 0) {
-                            if (touchPoints.get(leftMostId).getX() > 0) {
-                                touchPoints.get(0).addX(diffX);
-                                touchPoints.get(1).addX(diffX);
-                                touchPoints.get(2).addX(diffX);
-                                touchPoints.get(3).addX(diffX);
-                                touchPoints.get(4).addX(diffX);
-                                touchPoints.get(5).addX(diffX);
-                                touchPoints.get(6).addX(diffX);
-                                touchPoints.get(7).addX(diffX);
+                            int getX = touchPoints.get(leftMostId).getX() + (touchPoints.get(leftMostId).getWidthOfTouchPoint()/2);
+                            if (getX > 0) {
+                                int tempDiffX = diffX;
+                                if(getX + diffX < 0) {
+                                    tempDiffX = getX * -1;
+                                }
+
+                                touchPoints.get(0).addX(tempDiffX);
+                                touchPoints.get(1).addX(tempDiffX);
+                                touchPoints.get(2).addX(tempDiffX);
+                                touchPoints.get(3).addX(tempDiffX);
+                                touchPoints.get(4).addX(tempDiffX);
+                                touchPoints.get(5).addX(tempDiffX);
+                                touchPoints.get(6).addX(tempDiffX);
+                                touchPoints.get(7).addX(tempDiffX);
                             }
                         } else {
-                            if (touchPoints.get(rightMostId).getX() + touchPoints.get(2).getWidthOfTouchPoint() < this.w) {
-                                touchPoints.get(0).addX(diffX);
-                                touchPoints.get(1).addX(diffX);
-                                touchPoints.get(2).addX(diffX);
-                                touchPoints.get(3).addX(diffX);
-                                touchPoints.get(4).addX(diffX);
-                                touchPoints.get(5).addX(diffX);
-                                touchPoints.get(6).addX(diffX);
-                                touchPoints.get(7).addX(diffX);
+                            int getX = touchPoints.get(rightMostId).getX() + (touchPoints.get(rightMostId).getWidthOfTouchPoint()/2);
+                            if (getX < this.w) {
+                                int tempDiffX = diffX;
+                                if (getX + diffX > this.w) {
+                                    tempDiffX = this.w - getX;
+                                }
+
+                                touchPoints.get(0).addX(tempDiffX);
+                                touchPoints.get(1).addX(tempDiffX);
+                                touchPoints.get(2).addX(tempDiffX);
+                                touchPoints.get(3).addX(tempDiffX);
+                                touchPoints.get(4).addX(tempDiffX);
+                                touchPoints.get(5).addX(tempDiffX);
+                                touchPoints.get(6).addX(tempDiffX);
+                                touchPoints.get(7).addX(tempDiffX);
                             }
                         }
 
                         if (diffY < 0) {
-                            if (touchPoints.get(topMostId).getY() - 5 > 0) {
-                                touchPoints.get(0).addY(diffY);
-                                touchPoints.get(1).addY(diffY);
-                                touchPoints.get(2).addY(diffY);
-                                touchPoints.get(3).addY(diffY);
-                                touchPoints.get(4).addY(diffY);
-                                touchPoints.get(5).addY(diffY);
-                                touchPoints.get(6).addY(diffY);
-                                touchPoints.get(7).addY(diffY);
+                            int getY = touchPoints.get(topMostId).getY() + (touchPoints.get(topMostId).getHeightOfTouchPoint()/2);
+                            if (getY > 0) {
+                                int tempDiffY = diffY;
+                                if (getY + tempDiffY < 0) {
+                                    tempDiffY = getY * -1;
+                                }
+
+                                touchPoints.get(0).addY(tempDiffY);
+                                touchPoints.get(1).addY(tempDiffY);
+                                touchPoints.get(2).addY(tempDiffY);
+                                touchPoints.get(3).addY(tempDiffY);
+                                touchPoints.get(4).addY(tempDiffY);
+                                touchPoints.get(5).addY(tempDiffY);
+                                touchPoints.get(6).addY(tempDiffY);
+                                touchPoints.get(7).addY(tempDiffY);
                             }
                         } else {
-                            if (touchPoints.get(bottomMostId).getY() + touchPoints.get(2).getHeightOfTouchPoint() < this.h) {
-                                touchPoints.get(0).addY(diffY);
-                                touchPoints.get(1).addY(diffY);
-                                touchPoints.get(2).addY(diffY);
-                                touchPoints.get(3).addY(diffY);
-                                touchPoints.get(4).addY(diffY);
-                                touchPoints.get(5).addY(diffY);
-                                touchPoints.get(6).addY(diffY);
-                                touchPoints.get(7).addY(diffY);
+                            int getY = touchPoints.get(bottomMostId).getY() + touchPoints.get(bottomMostId).getHeightOfTouchPoint()/2;
+                            if (getY < this.h) {
+                                int tempDiffY = diffY;
+                                if (getY + diffY > this.h) {
+                                    tempDiffY = this.h - getY;
+                                }
+
+                                touchPoints.get(0).addY(tempDiffY);
+                                touchPoints.get(1).addY(tempDiffY);
+                                touchPoints.get(2).addY(tempDiffY);
+                                touchPoints.get(3).addY(tempDiffY);
+                                touchPoints.get(4).addY(tempDiffY);
+                                touchPoints.get(5).addY(tempDiffY);
+                                touchPoints.get(6).addY(tempDiffY);
+                                touchPoints.get(7).addY(tempDiffY);
                             }
                         }
                     }
