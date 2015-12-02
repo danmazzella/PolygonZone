@@ -21,6 +21,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.support.v4.content.ContextCompat;
+
+import com.mazzella.polygon.polygonzone.R;
 
 public class TouchPoint {
 
@@ -32,7 +35,12 @@ public class TouchPoint {
     public TouchPoint(Context context, int resourceId, Point point, int id) {
         this.id = id;
         bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
-        bitmap = Bitmap.createScaledBitmap(bitmap, (int) (20 * context.getResources().getDisplayMetrics().density), (int) (20 * context.getResources().getDisplayMetrics().density), true);
+        int drawableSize = 18;
+        if (resourceId == R.drawable.circle_touchpoint) {
+            drawableSize = 22;
+        }
+        bitmap = Bitmap.createScaledBitmap(bitmap, (int) (drawableSize * context.getResources().getDisplayMetrics().density), (int) (drawableSize * context.getResources().getDisplayMetrics().density), true);
+
         mContext = context;
         this.point = point;
     }

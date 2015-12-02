@@ -23,6 +23,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -98,10 +101,10 @@ public class PolygonCanvas extends View {
         point14.y = this.h / 2 - point1.y;
 
         touchPoints = new ArrayList<>();
-        touchPoints.add(0, new TouchPoint(context, R.drawable.square_touchpoint, point1, 0));
-        touchPoints.add(1, new TouchPoint(context, R.drawable.square_touchpoint, point2, 1));
-        touchPoints.add(2, new TouchPoint(context, R.drawable.square_touchpoint, point3, 2));
-        touchPoints.add(3, new TouchPoint(context, R.drawable.square_touchpoint, point4, 3));
+        touchPoints.add(0, new TouchPoint(context, R.drawable.circle_touchpoint, point1, 0));
+        touchPoints.add(1, new TouchPoint(context, R.drawable.circle_touchpoint, point2, 1));
+        touchPoints.add(2, new TouchPoint(context, R.drawable.circle_touchpoint, point3, 2));
+        touchPoints.add(3, new TouchPoint(context, R.drawable.circle_touchpoint, point4, 3));
         touchPoints.add(4, new TouchPoint(context, R.drawable.square_touchpoint, point12, 4));
         touchPoints.add(5, new TouchPoint(context, R.drawable.square_touchpoint, point23, 5));
         touchPoints.add(6, new TouchPoint(context, R.drawable.square_touchpoint, point34, 6));
@@ -109,14 +112,17 @@ public class PolygonCanvas extends View {
 
         areaFill = new Paint();
         areaLine = new Path();
+
+        bitmapColor = new Paint();
+        bitmapColor.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(context, R.color.colorAccent), PorterDuff.Mode.SRC_IN));
     }
 
-    Paint areaFill;
+    Paint areaFill, bitmapColor;
     Path areaLine;
 
     @Override
     protected void onDraw(Canvas canvas) {
-        areaFill.setColor(Color.parseColor("#55FFFFFF"));
+        areaFill.setColor(Color.parseColor("#55FF4081"));
         areaFill.setStyle(Paint.Style.FILL);
 
         areaLine.reset();
@@ -132,7 +138,7 @@ public class PolygonCanvas extends View {
         canvas.drawPath(areaLine, areaFill);
 
         for (TouchPoint touchPoint : touchPoints) {
-            canvas.drawBitmap(touchPoint.getBitmap(), touchPoint.getX(), touchPoint.getY(), null);
+            canvas.drawBitmap(touchPoint.getBitmap(), touchPoint.getX(), touchPoint.getY(), bitmapColor);
         }
     }
 
