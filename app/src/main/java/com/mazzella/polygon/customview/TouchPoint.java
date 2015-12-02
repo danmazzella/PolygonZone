@@ -13,17 +13,16 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-
-
 package com.mazzella.polygon.customview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.support.v4.content.ContextCompat;
 
 import com.mazzella.polygon.polygonzone.R;
+
+import java.util.ArrayList;
 
 public class TouchPoint {
 
@@ -31,6 +30,10 @@ public class TouchPoint {
     Context mContext;
     Point point;
     int id;
+    Boolean isLocked = true;
+    ArrayList<Integer> cornerIds = new ArrayList<>();
+    ArrayList<Integer> edgeIds = new ArrayList<>();
+
 
     public TouchPoint(Context context, int resourceId, Point point, int id) {
         this.id = id;
@@ -83,5 +86,33 @@ public class TouchPoint {
 
     public void addX(int x) {
         point.x = point.x + x;
+    }
+
+    public void setIsLocked(Boolean isLocked) {
+        this.isLocked = isLocked;
+    }
+
+    public Boolean getIsLocked() {
+        return isLocked;
+    }
+
+    public ArrayList<Integer> getCornerIds() {
+        return cornerIds;
+    }
+
+    public ArrayList<Integer> getEdgeIds() {
+        return edgeIds;
+    }
+
+    public void setOtherIds(int theArray, int idOne, int idTwo) {
+        if (theArray == 0) {
+            cornerIds = new ArrayList<>();
+            cornerIds.add(0, idOne);
+            cornerIds.add(1, idTwo);
+        } else {
+            edgeIds = new ArrayList<>();
+            edgeIds.add(0, idOne);
+            edgeIds.add(1, idTwo);
+        }
     }
 }
