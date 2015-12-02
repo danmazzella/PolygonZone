@@ -177,11 +177,6 @@ public class PolygonCanvas extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (pointId > -1) {
-                    int diffX = X - origPoint.x;
-                    int diffY = Y - origPoint.y;
-                    origPoint.x = X;
-                    origPoint.y = Y;
-
                     if (X > 0 && X < this.w - touchPoints.get(pointId).getWidthOfTouchPoint()) {
                         touchPoints.get(pointId).setX(X);
 
@@ -201,13 +196,15 @@ public class PolygonCanvas extends View {
                     if (Y > 0 && Y < this.h - touchPoints.get(pointId).getHeightOfTouchPoint()) {
                         touchPoints.get(pointId).setY(Y);
 
-                        ArrayList<Integer> edgeIds = touchPoints.get(pointId).getEdgeIds();
-                        ArrayList<Integer> cornerIds = touchPoints.get(pointId).getCornerIds();
+                        if (pointId <= 3) {
+                            ArrayList<Integer> edgeIds = touchPoints.get(pointId).getEdgeIds();
+                            ArrayList<Integer> cornerIds = touchPoints.get(pointId).getCornerIds();
 
-                        for (int incr = 0; incr < edgeIds.size(); incr++) {
-                            if (touchPoints.get(edgeIds.get(incr)).getIsLocked()) {
-                                int cornerY = touchPoints.get(cornerIds.get(incr)).getY();
-                                touchPoints.get(edgeIds.get(incr)).setY((Y + cornerY) / 2);
+                            for (int incr = 0; incr < edgeIds.size(); incr++) {
+                                if (touchPoints.get(edgeIds.get(incr)).getIsLocked()) {
+                                    int cornerY = touchPoints.get(cornerIds.get(incr)).getY();
+                                    touchPoints.get(edgeIds.get(incr)).setY((Y + cornerY) / 2);
+                                }
                             }
                         }
                     }
