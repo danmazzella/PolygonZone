@@ -55,7 +55,7 @@ public class PolygonCanvas extends View {
         this.context = context;
     }
 
-    private void init() {
+    public void init() {
         setFocusable(true);
 
         touchPoints = new ArrayList<>();
@@ -116,6 +116,14 @@ public class PolygonCanvas extends View {
 
         bitmapColor = new Paint();
         bitmapColor.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(context, R.color.colorAccent), PorterDuff.Mode.SRC_IN));
+
+        invalidate();
+    }
+
+    public void clearTouchPoints() {
+        touchPoints = new ArrayList<>();
+        areaFill = null;
+        invalidate();
     }
 
     private Paint areaFill;
@@ -124,23 +132,25 @@ public class PolygonCanvas extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        areaFill.setColor(Color.parseColor("#55FF4081"));
-        areaFill.setStyle(Paint.Style.FILL);
+        if (areaFill != null) {
+            areaFill.setColor(Color.parseColor("#55FF4081"));
+            areaFill.setStyle(Paint.Style.FILL);
 
-        areaLine.reset();
-        areaLine.moveTo(touchPoints.get(0).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(0).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-        areaLine.lineTo(touchPoints.get(4).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(4).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-        areaLine.lineTo(touchPoints.get(1).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(1).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-        areaLine.lineTo(touchPoints.get(5).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(5).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-        areaLine.lineTo(touchPoints.get(2).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(2).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-        areaLine.lineTo(touchPoints.get(6).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(6).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-        areaLine.lineTo(touchPoints.get(3).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(3).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-        areaLine.lineTo(touchPoints.get(7).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(7).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-        areaLine.close();
-        canvas.drawPath(areaLine, areaFill);
+            areaLine.reset();
+            areaLine.moveTo(touchPoints.get(0).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(0).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
+            areaLine.lineTo(touchPoints.get(4).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(4).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
+            areaLine.lineTo(touchPoints.get(1).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(1).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
+            areaLine.lineTo(touchPoints.get(5).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(5).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
+            areaLine.lineTo(touchPoints.get(2).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(2).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
+            areaLine.lineTo(touchPoints.get(6).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(6).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
+            areaLine.lineTo(touchPoints.get(3).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(3).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
+            areaLine.lineTo(touchPoints.get(7).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(7).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
+            areaLine.close();
+            canvas.drawPath(areaLine, areaFill);
 
-        for (TouchPoint touchPoint : touchPoints) {
-            canvas.drawBitmap(touchPoint.getBitmap(), touchPoint.getX(), touchPoint.getY(), bitmapColor);
+            for (TouchPoint touchPoint : touchPoints) {
+                canvas.drawBitmap(touchPoint.getBitmap(), touchPoint.getX(), touchPoint.getY(), bitmapColor);
+            }
         }
     }
 
@@ -202,107 +212,109 @@ public class PolygonCanvas extends View {
                         }
                     }
                 } else {
-                    if (origPoint != null) {
-                        int diffX = X - origPoint.x;
-                        int diffY = Y - origPoint.y;
-                        origPoint.x = X;
-                        origPoint.y = Y;
+                    if (touchPoints.size() > 0) {
+                        if (origPoint != null) {
+                            int diffX = X - origPoint.x;
+                            int diffY = Y - origPoint.y;
+                            origPoint.x = X;
+                            origPoint.y = Y;
 
-                        int leftMost = 0;
-                        int rightMost = 0;
-                        int topMost = 0;
-                        int bottomMost = 0;
+                            int leftMost = 0;
+                            int rightMost = 0;
+                            int topMost = 0;
+                            int bottomMost = 0;
 
-                        int leftMostId = 0, rightMostId = 0, topMostId = 0, bottomMostId = 0;
+                            int leftMostId = 0, rightMostId = 0, topMostId = 0, bottomMostId = 0;
 
-                        for (TouchPoint touchPoint : touchPoints) {
-                            if (touchPoint.getX() < leftMost) {
-                                leftMost = touchPoint.getX();
-                                leftMostId = touchPoint.getId();
-                            }
-                            if (touchPoint.getX() > rightMost) {
-                                rightMost = touchPoint.getX();
-                                rightMostId = touchPoint.getId();
-                            }
-                            if (touchPoint.getY() < topMost) {
-                                topMost = touchPoint.getY();
-                                topMostId = touchPoint.getId();
-                            }
-                            if (touchPoint.getY() > bottomMost) {
-                                bottomMost = touchPoint.getY();
-                                bottomMostId = touchPoint.getId();
-                            }
-                        }
-
-                        if (diffX < 0) {
-                            int getX = touchPoints.get(leftMostId).getX() + (touchPoints.get(leftMostId).getWidthOfTouchPoint() / 2);
-                            if (getX > 0) {
-                                int tempDiffX = diffX;
-                                if (getX + diffX < 0) {
-                                    tempDiffX = getX * -1;
+                            for (TouchPoint touchPoint : touchPoints) {
+                                if (touchPoint.getX() < leftMost) {
+                                    leftMost = touchPoint.getX();
+                                    leftMostId = touchPoint.getId();
                                 }
-
-                                touchPoints.get(0).addX(tempDiffX);
-                                touchPoints.get(1).addX(tempDiffX);
-                                touchPoints.get(2).addX(tempDiffX);
-                                touchPoints.get(3).addX(tempDiffX);
-                                touchPoints.get(4).addX(tempDiffX);
-                                touchPoints.get(5).addX(tempDiffX);
-                                touchPoints.get(6).addX(tempDiffX);
-                                touchPoints.get(7).addX(tempDiffX);
-                            }
-                        } else {
-                            int getX = touchPoints.get(rightMostId).getX() + (touchPoints.get(rightMostId).getWidthOfTouchPoint() / 2);
-                            if (getX < this.w) {
-                                int tempDiffX = diffX;
-                                if (getX + diffX > this.w) {
-                                    tempDiffX = this.w - getX;
+                                if (touchPoint.getX() > rightMost) {
+                                    rightMost = touchPoint.getX();
+                                    rightMostId = touchPoint.getId();
                                 }
-
-                                touchPoints.get(0).addX(tempDiffX);
-                                touchPoints.get(1).addX(tempDiffX);
-                                touchPoints.get(2).addX(tempDiffX);
-                                touchPoints.get(3).addX(tempDiffX);
-                                touchPoints.get(4).addX(tempDiffX);
-                                touchPoints.get(5).addX(tempDiffX);
-                                touchPoints.get(6).addX(tempDiffX);
-                                touchPoints.get(7).addX(tempDiffX);
-                            }
-                        }
-
-                        if (diffY < 0) {
-                            int getY = touchPoints.get(topMostId).getY() + (touchPoints.get(topMostId).getHeightOfTouchPoint() / 2);
-                            if (getY > 0) {
-                                int tempDiffY = diffY;
-                                if (getY + tempDiffY < 0) {
-                                    tempDiffY = getY * -1;
+                                if (touchPoint.getY() < topMost) {
+                                    topMost = touchPoint.getY();
+                                    topMostId = touchPoint.getId();
                                 }
-
-                                touchPoints.get(0).addY(tempDiffY);
-                                touchPoints.get(1).addY(tempDiffY);
-                                touchPoints.get(2).addY(tempDiffY);
-                                touchPoints.get(3).addY(tempDiffY);
-                                touchPoints.get(4).addY(tempDiffY);
-                                touchPoints.get(5).addY(tempDiffY);
-                                touchPoints.get(6).addY(tempDiffY);
-                                touchPoints.get(7).addY(tempDiffY);
-                            }
-                        } else {
-                            int getY = touchPoints.get(bottomMostId).getY() + touchPoints.get(bottomMostId).getHeightOfTouchPoint() / 2;
-                            if (getY < this.h) {
-                                int tempDiffY = diffY;
-                                if (getY + diffY > this.h) {
-                                    tempDiffY = this.h - getY;
+                                if (touchPoint.getY() > bottomMost) {
+                                    bottomMost = touchPoint.getY();
+                                    bottomMostId = touchPoint.getId();
                                 }
+                            }
 
-                                touchPoints.get(0).addY(tempDiffY);
-                                touchPoints.get(1).addY(tempDiffY);
-                                touchPoints.get(2).addY(tempDiffY);
-                                touchPoints.get(3).addY(tempDiffY);
-                                touchPoints.get(4).addY(tempDiffY);
-                                touchPoints.get(5).addY(tempDiffY);
-                                touchPoints.get(6).addY(tempDiffY);
-                                touchPoints.get(7).addY(tempDiffY);
+                            if (diffX < 0) {
+                                int getX = touchPoints.get(leftMostId).getX() + (touchPoints.get(leftMostId).getWidthOfTouchPoint() / 2);
+                                if (getX > 0) {
+                                    int tempDiffX = diffX;
+                                    if (getX + diffX < 0) {
+                                        tempDiffX = getX * -1;
+                                    }
+
+                                    touchPoints.get(0).addX(tempDiffX);
+                                    touchPoints.get(1).addX(tempDiffX);
+                                    touchPoints.get(2).addX(tempDiffX);
+                                    touchPoints.get(3).addX(tempDiffX);
+                                    touchPoints.get(4).addX(tempDiffX);
+                                    touchPoints.get(5).addX(tempDiffX);
+                                    touchPoints.get(6).addX(tempDiffX);
+                                    touchPoints.get(7).addX(tempDiffX);
+                                }
+                            } else {
+                                int getX = touchPoints.get(rightMostId).getX() + (touchPoints.get(rightMostId).getWidthOfTouchPoint() / 2);
+                                if (getX < this.w) {
+                                    int tempDiffX = diffX;
+                                    if (getX + diffX > this.w) {
+                                        tempDiffX = this.w - getX;
+                                    }
+
+                                    touchPoints.get(0).addX(tempDiffX);
+                                    touchPoints.get(1).addX(tempDiffX);
+                                    touchPoints.get(2).addX(tempDiffX);
+                                    touchPoints.get(3).addX(tempDiffX);
+                                    touchPoints.get(4).addX(tempDiffX);
+                                    touchPoints.get(5).addX(tempDiffX);
+                                    touchPoints.get(6).addX(tempDiffX);
+                                    touchPoints.get(7).addX(tempDiffX);
+                                }
+                            }
+
+                            if (diffY < 0) {
+                                int getY = touchPoints.get(topMostId).getY() + (touchPoints.get(topMostId).getHeightOfTouchPoint() / 2);
+                                if (getY > 0) {
+                                    int tempDiffY = diffY;
+                                    if (getY + tempDiffY < 0) {
+                                        tempDiffY = getY * -1;
+                                    }
+
+                                    touchPoints.get(0).addY(tempDiffY);
+                                    touchPoints.get(1).addY(tempDiffY);
+                                    touchPoints.get(2).addY(tempDiffY);
+                                    touchPoints.get(3).addY(tempDiffY);
+                                    touchPoints.get(4).addY(tempDiffY);
+                                    touchPoints.get(5).addY(tempDiffY);
+                                    touchPoints.get(6).addY(tempDiffY);
+                                    touchPoints.get(7).addY(tempDiffY);
+                                }
+                            } else {
+                                int getY = touchPoints.get(bottomMostId).getY() + touchPoints.get(bottomMostId).getHeightOfTouchPoint() / 2;
+                                if (getY < this.h) {
+                                    int tempDiffY = diffY;
+                                    if (getY + diffY > this.h) {
+                                        tempDiffY = this.h - getY;
+                                    }
+
+                                    touchPoints.get(0).addY(tempDiffY);
+                                    touchPoints.get(1).addY(tempDiffY);
+                                    touchPoints.get(2).addY(tempDiffY);
+                                    touchPoints.get(3).addY(tempDiffY);
+                                    touchPoints.get(4).addY(tempDiffY);
+                                    touchPoints.get(5).addY(tempDiffY);
+                                    touchPoints.get(6).addY(tempDiffY);
+                                    touchPoints.get(7).addY(tempDiffY);
+                                }
                             }
                         }
                     }
@@ -319,7 +331,7 @@ public class PolygonCanvas extends View {
         this.w = w;
         this.h = h;
 
-        init();
+//        init();
         super.onSizeChanged(w, h, oldW, oldH);
     }
 }

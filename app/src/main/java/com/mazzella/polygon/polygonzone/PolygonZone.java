@@ -18,12 +18,34 @@ package com.mazzella.polygon.polygonzone;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+
+import com.mazzella.polygon.customview.PolygonCanvas;
 
 public class PolygonZone extends AppCompatActivity {
+
+    PolygonCanvas polygonCanvas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_polygon_zone);
+
+        polygonCanvas = (PolygonCanvas) findViewById(R.id.polygon_canvas);
+
+        findViewById(R.id.init).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                polygonCanvas.init();
+            }
+        });
+
+        findViewById(R.id.clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                polygonCanvas.clearTouchPoints();
+            }
+        });
     }
 }

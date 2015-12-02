@@ -10,7 +10,21 @@
     tools:context="com.mazzella.polygon.polygonzone.PolygonZone">
 
     <com.mazzella.polygon.customview.PolygonCanvas
+        android:id="@+id/polygon_canvas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/clouds"/>
+
+    <Button
+        android:id="@+id/clear"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="Clear"/>
+
+    <Button
+        android:id="@+id/init"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:text="Init"/>
 </RelativeLayout>
