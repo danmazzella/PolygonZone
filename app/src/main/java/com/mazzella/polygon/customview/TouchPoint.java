@@ -24,15 +24,14 @@ import com.mazzella.polygon.polygonzone.R;
 
 import java.util.ArrayList;
 
-public class TouchPoint {
+class TouchPoint {
 
-    Bitmap bitmap;
-    Context mContext;
-    Point point;
-    int id;
-    Boolean isLocked = true;
-    ArrayList<Integer> cornerIds = new ArrayList<>();
-    ArrayList<Integer> edgeIds = new ArrayList<>();
+    private Bitmap bitmap;
+    private final Point point;
+    private final int id;
+    private Boolean isLocked = true;
+    private ArrayList<Integer> cornerIds = new ArrayList<>();
+    private ArrayList<Integer> edgeIds = new ArrayList<>();
 
 
     public TouchPoint(Context context, int resourceId, Point point, int id) {
@@ -44,7 +43,6 @@ public class TouchPoint {
         }
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) (drawableSize * context.getResources().getDisplayMetrics().density), (int) (drawableSize * context.getResources().getDisplayMetrics().density), true);
 
-        mContext = context;
         this.point = point;
     }
 
@@ -88,8 +86,8 @@ public class TouchPoint {
         point.x = point.x + x;
     }
 
-    public void setIsLocked(Boolean isLocked) {
-        this.isLocked = isLocked;
+    public void setIsLocked() {
+        this.isLocked = false;
     }
 
     public Boolean getIsLocked() {
