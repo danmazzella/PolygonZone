@@ -74,7 +74,7 @@ public class PolygonCanvas extends View {
         point2.x = this.w - 100;
         point2.y = 50;
         touchPoints.add(1, new TouchPoint(context, R.drawable.circle_touchpoint, point2, 1));
-        touchPoints.get(1).setOtherIds(cornerIdsArray, 0, 3);
+        touchPoints.get(1).setOtherIds(cornerIdsArray, 0, 2);
         touchPoints.get(1).setOtherIds(edgeIdsArray, 4, 5);
 
         Point point3 = new Point();
