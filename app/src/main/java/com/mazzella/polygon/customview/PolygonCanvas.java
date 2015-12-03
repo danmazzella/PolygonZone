@@ -322,6 +322,8 @@ public class PolygonCanvas extends View {
                             if (diffX < 0) {
                                 int getX = touchPoints.get(leftMostId).getMidX();
                                 if (getX > 0) {
+                                    touchPoints.get(leftMostId).setIsModified();
+
                                     int tempDiffX = diffX;
                                     if (getX + diffX < 0) {
                                         tempDiffX = getX * -1;
@@ -339,6 +341,8 @@ public class PolygonCanvas extends View {
                             } else {
                                 int getX = touchPoints.get(rightMostId).getMidX();
                                 if (getX < this.w) {
+                                    touchPoints.get(rightMostId).setIsModified();
+
                                     int tempDiffX = diffX;
                                     if (getX + diffX > this.w) {
                                         tempDiffX = this.w - getX;
@@ -357,6 +361,9 @@ public class PolygonCanvas extends View {
 
                             if (diffY < 0) {
                                 int getY = touchPoints.get(topMostId).getMidY();
+
+                                touchPoints.get(topMostId).setIsModified();
+
                                 if (getY > 0) {
                                     int tempDiffY = diffY;
                                     if (getY + tempDiffY < 0) {
@@ -375,6 +382,9 @@ public class PolygonCanvas extends View {
                             } else {
                                 int getY = touchPoints.get(bottomMostId).getMidY();
                                 if (getY < this.h) {
+
+                                    touchPoints.get(bottomMostId).setIsModified();
+
                                     int tempDiffY = diffY;
                                     if (getY + diffY > this.h) {
                                         tempDiffY = this.h - getY;
@@ -405,7 +415,7 @@ public class PolygonCanvas extends View {
         this.w = w;
         this.h = h;
 
-//        init();
+        init("#FFFFFF", new JsonArray());
         super.onSizeChanged(w, h, oldW, oldH);
     }
 }
