@@ -24,6 +24,7 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -41,6 +42,8 @@ public class PolygonCanvas extends View {
     private int pointId = 0;
     private Context context;
     private String colorCode;
+    private int halfCircle, halfSquare;
+
 
     public PolygonCanvas(Context context) {
         super(context);
@@ -66,6 +69,9 @@ public class PolygonCanvas extends View {
         int cornerIdsArray = 0;
         int edgeIdsArray = 1;
 
+        halfCircle = (int)((22 * context.getResources().getDisplayMetrics().density) / 2);
+        halfSquare = (int)((18 * context.getResources().getDisplayMetrics().density) / 2);
+
         Point point1 = new Point();
         Point point2 = new Point();
         Point point3 = new Point();
@@ -76,8 +82,6 @@ public class PolygonCanvas extends View {
         Point point34 = new Point();
 
         if (zoneDefPoints.size() > 0) {
-            int halfCircle = (int)((22 * context.getResources().getDisplayMetrics().density) / 2);
-            int halfSquare = (int)((18 * context.getResources().getDisplayMetrics().density) / 2);
             point1.x = getPositionFromPercent(zoneDefPoints.get(0).getAsJsonArray().get(0).getAsInt(), 0) - halfCircle;
             point1.y = getPositionFromPercent(zoneDefPoints.get(0).getAsJsonArray().get(1).getAsInt(), 1) - halfCircle;
             point2.x = getPositionFromPercent(zoneDefPoints.get(2).getAsJsonArray().get(0).getAsInt(), 0) - halfCircle;
@@ -114,26 +118,28 @@ public class PolygonCanvas extends View {
         }
 
         touchPoints.add(0, new TouchPoint(context, R.drawable.circle_touchpoint, point1, 0));
-        touchPoints.add(1, new TouchPoint(context, R.drawable.circle_touchpoint, point2, 1));
-        touchPoints.add(2, new TouchPoint(context, R.drawable.circle_touchpoint, point3, 2));
-        touchPoints.add(3, new TouchPoint(context, R.drawable.circle_touchpoint, point4, 3));
-        touchPoints.add(4, new TouchPoint(context, R.drawable.square_touchpoint, point12, 4));
-        touchPoints.add(5, new TouchPoint(context, R.drawable.square_touchpoint, point23, 5));
-        touchPoints.add(6, new TouchPoint(context, R.drawable.square_touchpoint, point34, 6));
+        touchPoints.add(1, new TouchPoint(context, R.drawable.square_touchpoint, point12, 1));
+        touchPoints.add(2, new TouchPoint(context, R.drawable.circle_touchpoint, point2, 2));
+        touchPoints.add(3, new TouchPoint(context, R.drawable.square_touchpoint, point23, 3));
+        touchPoints.add(4, new TouchPoint(context, R.drawable.circle_touchpoint, point3, 4));
+        touchPoints.add(5, new TouchPoint(context, R.drawable.square_touchpoint, point34, 5));
+        touchPoints.add(6, new TouchPoint(context, R.drawable.circle_touchpoint, point4, 6));
         touchPoints.add(7, new TouchPoint(context, R.drawable.square_touchpoint, point14, 7));
 
-        touchPoints.get(0).setOtherIds(cornerIdsArray, 1, 3);
-        touchPoints.get(0).setOtherIds(edgeIdsArray, 4, 7);
-        touchPoints.get(1).setOtherIds(cornerIdsArray, 0, 2);
-        touchPoints.get(1).setOtherIds(edgeIdsArray, 4, 5);
-        touchPoints.get(2).setOtherIds(cornerIdsArray, 1, 3);
-        touchPoints.get(2).setOtherIds(edgeIdsArray, 5, 6);
-        touchPoints.get(3).setOtherIds(cornerIdsArray, 0, 2);
-        touchPoints.get(3).setOtherIds(edgeIdsArray, 7, 6);
+        touchPoints.get(0).setOtherIds(cornerIdsArray, 2, 6);
+        touchPoints.get(0).setOtherIds(edgeIdsArray, 1, 7);
+        touchPoints.get(2).setOtherIds(cornerIdsArray, 0, 4);
+        touchPoints.get(2).setOtherIds(edgeIdsArray, 1, 3);
+        touchPoints.get(4).setOtherIds(cornerIdsArray, 2, 6);
+        touchPoints.get(4).setOtherIds(edgeIdsArray, 3, 5);
+        touchPoints.get(6).setOtherIds(cornerIdsArray, 0, 4);
+        touchPoints.get(6).setOtherIds(edgeIdsArray, 7, 5);
 
         if (zoneDefPoints.size() > 0) {
-            for (int x = 4; x <= 7; x++){
-                touchPoints.get(x).setIsLocked();
+            for (int x = 0; x <= 7; x++){
+                if (!touchPoints.get(x).getIsCornerPoint()) {
+                    touchPoints.get(x).setIsLocked();
+                }
             }
         }
 
@@ -173,14 +179,14 @@ public class PolygonCanvas extends View {
             areaFill.setStyle(Paint.Style.FILL);
 
             areaLine.reset();
-            areaLine.moveTo(touchPoints.get(0).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(0).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-            areaLine.lineTo(touchPoints.get(4).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(4).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-            areaLine.lineTo(touchPoints.get(1).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(1).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-            areaLine.lineTo(touchPoints.get(5).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(5).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-            areaLine.lineTo(touchPoints.get(2).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(2).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-            areaLine.lineTo(touchPoints.get(6).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(6).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-            areaLine.lineTo(touchPoints.get(3).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(3).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
-            areaLine.lineTo(touchPoints.get(7).getX() + touchPoints.get(0).getWidthOfTouchPoint() / 2, touchPoints.get(7).getY() + touchPoints.get(0).getHeightOfTouchPoint() / 2);
+            areaLine.moveTo(touchPoints.get(0).getMidX(), touchPoints.get(0).getMidY());
+            areaLine.lineTo(touchPoints.get(1).getMidX(), touchPoints.get(1).getMidY());
+            areaLine.lineTo(touchPoints.get(2).getMidX(), touchPoints.get(2).getMidY());
+            areaLine.lineTo(touchPoints.get(3).getMidX(), touchPoints.get(3).getMidY());
+            areaLine.lineTo(touchPoints.get(4).getMidX(), touchPoints.get(4).getMidY());
+            areaLine.lineTo(touchPoints.get(5).getMidX(), touchPoints.get(5).getMidY());
+            areaLine.lineTo(touchPoints.get(6).getMidX(), touchPoints.get(6).getMidY());
+            areaLine.lineTo(touchPoints.get(7).getMidX(), touchPoints.get(7).getMidY());
             areaLine.close();
             canvas.drawPath(areaLine, areaFill);
 
@@ -219,7 +225,7 @@ public class PolygonCanvas extends View {
                     if (X > 0 && X < this.w - touchPoints.get(pointId).getWidthOfTouchPoint()) {
                         touchPoints.get(pointId).setX(X);
 
-                        if (pointId <= 3) {
+                        if (touchPoints.get(pointId).getIsCornerPoint()) {
                             ArrayList<Integer> edgeIds = touchPoints.get(pointId).getEdgeIds();
                             ArrayList<Integer> cornerIds = touchPoints.get(pointId).getCornerIds();
 
@@ -235,7 +241,7 @@ public class PolygonCanvas extends View {
                     if (Y > 0 && Y < this.h - touchPoints.get(pointId).getHeightOfTouchPoint()) {
                         touchPoints.get(pointId).setY(Y);
 
-                        if (pointId <= 3) {
+                        if (touchPoints.get(pointId).getIsCornerPoint()) {
                             ArrayList<Integer> edgeIds = touchPoints.get(pointId).getEdgeIds();
                             ArrayList<Integer> cornerIds = touchPoints.get(pointId).getCornerIds();
 
@@ -282,7 +288,7 @@ public class PolygonCanvas extends View {
                             }
 
                             if (diffX < 0) {
-                                int getX = touchPoints.get(leftMostId).getX() + (touchPoints.get(leftMostId).getWidthOfTouchPoint() / 2);
+                                int getX = touchPoints.get(leftMostId).getMidX();
                                 if (getX > 0) {
                                     int tempDiffX = diffX;
                                     if (getX + diffX < 0) {
@@ -299,7 +305,7 @@ public class PolygonCanvas extends View {
                                     touchPoints.get(7).addX(tempDiffX);
                                 }
                             } else {
-                                int getX = touchPoints.get(rightMostId).getX() + (touchPoints.get(rightMostId).getWidthOfTouchPoint() / 2);
+                                int getX = touchPoints.get(rightMostId).getMidX();
                                 if (getX < this.w) {
                                     int tempDiffX = diffX;
                                     if (getX + diffX > this.w) {
@@ -318,7 +324,7 @@ public class PolygonCanvas extends View {
                             }
 
                             if (diffY < 0) {
-                                int getY = touchPoints.get(topMostId).getY() + (touchPoints.get(topMostId).getHeightOfTouchPoint() / 2);
+                                int getY = touchPoints.get(topMostId).getMidY();
                                 if (getY > 0) {
                                     int tempDiffY = diffY;
                                     if (getY + tempDiffY < 0) {
@@ -335,7 +341,7 @@ public class PolygonCanvas extends View {
                                     touchPoints.get(7).addY(tempDiffY);
                                 }
                             } else {
-                                int getY = touchPoints.get(bottomMostId).getY() + touchPoints.get(bottomMostId).getHeightOfTouchPoint() / 2;
+                                int getY = touchPoints.get(bottomMostId).getMidY();
                                 if (getY < this.h) {
                                     int tempDiffY = diffY;
                                     if (getY + diffY > this.h) {

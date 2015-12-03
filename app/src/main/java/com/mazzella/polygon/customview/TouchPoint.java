@@ -19,6 +19,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.mazzella.polygon.polygonzone.R;
 
@@ -32,7 +33,7 @@ class TouchPoint {
     private Boolean isLocked = true;
     private ArrayList<Integer> cornerIds = new ArrayList<>();
     private ArrayList<Integer> edgeIds = new ArrayList<>();
-
+    private Boolean isCornerPoint = false;
 
     public TouchPoint(Context context, int resourceId, Point point, int id) {
         this.id = id;
@@ -44,6 +45,10 @@ class TouchPoint {
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) (drawableSize * context.getResources().getDisplayMetrics().density), (int) (drawableSize * context.getResources().getDisplayMetrics().density), true);
 
         this.point = point;
+
+        if ((id % 2) == 0) {
+            isCornerPoint = true;
+        }
     }
 
     public int getWidthOfTouchPoint() {
@@ -64,6 +69,14 @@ class TouchPoint {
 
     public int getY() {
         return point.y;
+    }
+
+    public int getMidX() {
+        return point.x + getWidthOfTouchPoint() / 2;
+    }
+
+    public int getMidY() {
+        return point.y + getHeightOfTouchPoint() / 2;
     }
 
     public int getId() {
@@ -112,5 +125,9 @@ class TouchPoint {
             edgeIds.add(0, idOne);
             edgeIds.add(1, idTwo);
         }
+    }
+
+    public Boolean getIsCornerPoint() {
+        return this.isCornerPoint;
     }
 }
