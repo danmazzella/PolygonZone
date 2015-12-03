@@ -34,6 +34,7 @@ class TouchPoint {
     private ArrayList<Integer> cornerIds = new ArrayList<>();
     private ArrayList<Integer> edgeIds = new ArrayList<>();
     private Boolean isCornerPoint = false;
+    private Boolean isModified = false;
 
     public TouchPoint(Context context, int resourceId, Point point, int id) {
         this.id = id;
@@ -129,5 +130,13 @@ class TouchPoint {
 
     public Boolean getIsCornerPoint() {
         return this.isCornerPoint;
+    }
+
+    public void setIsModified() {
+        this.isModified = true;
+    }
+
+    public Boolean getIsModified() {
+        return this.isModified;
     }
 }

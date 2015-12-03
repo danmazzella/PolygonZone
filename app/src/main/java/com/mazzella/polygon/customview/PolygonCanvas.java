@@ -42,7 +42,6 @@ public class PolygonCanvas extends View {
     private int pointId = 0;
     private Context context;
     private String colorCode;
-    private int halfCircle, halfSquare;
 
 
     public PolygonCanvas(Context context) {
@@ -69,8 +68,8 @@ public class PolygonCanvas extends View {
         int cornerIdsArray = 0;
         int edgeIdsArray = 1;
 
-        halfCircle = (int)((22 * context.getResources().getDisplayMetrics().density) / 2);
-        halfSquare = (int)((18 * context.getResources().getDisplayMetrics().density) / 2);
+        int halfCircle = (int) ((22 * context.getResources().getDisplayMetrics().density) / 2);
+        int halfSquare = (int) ((18 * context.getResources().getDisplayMetrics().density) / 2);
 
         Point point1 = new Point();
         Point point2 = new Point();
@@ -155,15 +154,25 @@ public class PolygonCanvas extends View {
     public JsonArray getPointCoordinates() {
         JsonArray allPoints = new JsonArray();
 
+        Boolean anyModified = false;
+
         for (TouchPoint touchPoint : touchPoints) {
+            if (touchPoint.getIsModified()) {
+                anyModified = true;
+            }
+
             JsonArray singlePoints = new JsonArray();
-            singlePoints.add(touchPoint.getMidX());
-            singlePoints.add(touchPoint.getMidY());
+            singlePoints.add(getPercentFromPosition(touchPoint.getMidX(), 0));
+            singlePoints.add(getPercentFromPosition(touchPoint.getMidY(), 1));
 
             allPoints.add(singlePoints);
         }
 
-        return allPoints;
+        if (anyModified) {
+            return allPoints;
+        } else {
+            return new JsonArray();
+        }
     }
 
     private int getPositionFromPercent(int position, int XorY) {
@@ -173,6 +182,14 @@ public class PolygonCanvas extends View {
         } else {
             //Then it's Y
             return (position * this.h) / 10000;
+        }
+    }
+
+    private int getPercentFromPosition(int position, int XorY) {
+        if (XorY == 0) {
+            return (position * 10000) / this.w;
+        } else {
+            return (position * 10000) / this.h;
         }
     }
 
@@ -229,6 +246,7 @@ public class PolygonCanvas extends View {
                     if (radCircle < touchPoint.getWidthOfTouchPoint()) {
                         pointId = touchPoint.getId();
                         touchPoint.setIsLocked();
+                        touchPoint.setIsModified();
                         break;
                     }
                 }
