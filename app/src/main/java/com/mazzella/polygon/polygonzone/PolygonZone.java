@@ -16,11 +16,14 @@
 
 package com.mazzella.polygon.polygonzone;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mazzella.polygon.customview.PolygonCanvas;
 
 public class PolygonZone extends AppCompatActivity {
@@ -34,10 +37,19 @@ public class PolygonZone extends AppCompatActivity {
 
         polygonCanvas = (PolygonCanvas) findViewById(R.id.polygon_canvas);
 
+        polygonCanvas.getLayoutParams().width = getResources().getDisplayMetrics().widthPixels;
+        polygonCanvas.getLayoutParams().height = (int) (getResources().getDisplayMetrics().widthPixels * .56429330);
+
+        Log.d("WiZR", "The width: " + getResources().getDisplayMetrics().widthPixels);
+        Log.d("WiZR", "The height: " + (int) (getResources().getDisplayMetrics().widthPixels * .56429330));
+
         findViewById(R.id.init).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                polygonCanvas.init();
+                JsonParser jsonParser = new JsonParser();
+                JsonObject jsonObject = jsonParser.parse("{\"points\":[[2286,3053],[6000,1781],[9714,509],[9714,5000],[9714,9491],[4929,5293],[286,9491],[1286,6272]]}").getAsJsonObject();
+                JsonArray jsonArray = jsonObject.getAsJsonArray("points");
+                polygonCanvas.init("#FFFFFF", jsonArray);
             }
         });
 

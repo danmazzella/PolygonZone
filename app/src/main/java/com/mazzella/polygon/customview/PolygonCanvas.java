@@ -23,11 +23,11 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.gson.JsonArray;
 import com.mazzella.polygon.polygonzone.R;
 
 import java.util.ArrayList;
@@ -40,6 +40,7 @@ public class PolygonCanvas extends View {
     private ArrayList<TouchPoint> touchPoints;
     private int pointId = 0;
     private Context context;
+    private String colorCode;
 
     public PolygonCanvas(Context context) {
         super(context);
@@ -55,8 +56,10 @@ public class PolygonCanvas extends View {
         this.context = context;
     }
 
-    public void init() {
+    public void init(String colorCode, JsonArray zoneDefPoints) {
         setFocusable(true);
+
+        this.colorCode = colorCode;
 
         touchPoints = new ArrayList<>();
 
@@ -64,60 +67,93 @@ public class PolygonCanvas extends View {
         int edgeIdsArray = 1;
 
         Point point1 = new Point();
-        point1.x = 50;
-        point1.y = 50;
+        Point point2 = new Point();
+        Point point3 = new Point();
+        Point point4 = new Point();
+        Point point12 = new Point();
+        Point point23 = new Point();
+        Point point14 = new Point();
+        Point point34 = new Point();
+
+        if (zoneDefPoints.size() > 0) {
+            int halfCircle = (int)((22 * context.getResources().getDisplayMetrics().density) / 2);
+            int halfSquare = (int)((18 * context.getResources().getDisplayMetrics().density) / 2);
+            point1.x = getPositionFromPercent(zoneDefPoints.get(0).getAsJsonArray().get(0).getAsInt(), 0) - halfCircle;
+            point1.y = getPositionFromPercent(zoneDefPoints.get(0).getAsJsonArray().get(1).getAsInt(), 1) - halfCircle;
+            point2.x = getPositionFromPercent(zoneDefPoints.get(2).getAsJsonArray().get(0).getAsInt(), 0) - halfCircle;
+            point2.y = getPositionFromPercent(zoneDefPoints.get(2).getAsJsonArray().get(1).getAsInt(), 1) - halfCircle;
+            point3.x = getPositionFromPercent(zoneDefPoints.get(4).getAsJsonArray().get(0).getAsInt(), 0) - halfCircle;
+            point3.y = getPositionFromPercent(zoneDefPoints.get(4).getAsJsonArray().get(1).getAsInt(), 1) - halfCircle;
+            point4.x = getPositionFromPercent(zoneDefPoints.get(6).getAsJsonArray().get(0).getAsInt(), 0) - halfCircle;
+            point4.y = getPositionFromPercent(zoneDefPoints.get(6).getAsJsonArray().get(1).getAsInt(), 1) - halfCircle;
+            point12.x = getPositionFromPercent(zoneDefPoints.get(1).getAsJsonArray().get(0).getAsInt(), 0) - halfSquare;
+            point12.y = getPositionFromPercent(zoneDefPoints.get(1).getAsJsonArray().get(1).getAsInt(), 1) - halfSquare;
+            point23.x = getPositionFromPercent(zoneDefPoints.get(3).getAsJsonArray().get(0).getAsInt(), 0) - halfSquare;
+            point23.y = getPositionFromPercent(zoneDefPoints.get(3).getAsJsonArray().get(1).getAsInt(), 1) - halfSquare;
+            point34.x = getPositionFromPercent(zoneDefPoints.get(5).getAsJsonArray().get(0).getAsInt(), 0) - halfSquare;
+            point34.y = getPositionFromPercent(zoneDefPoints.get(5).getAsJsonArray().get(1).getAsInt(), 1) - halfSquare;
+            point14.x = getPositionFromPercent(zoneDefPoints.get(7).getAsJsonArray().get(0).getAsInt(), 0) - halfSquare;
+            point14.y = getPositionFromPercent(zoneDefPoints.get(7).getAsJsonArray().get(1).getAsInt(), 1) - halfSquare;
+        } else {
+            point1.x = 50;
+            point1.y = 50;
+            point2.x = this.w - 100;
+            point2.y = 50;
+            point3.x = this.w - 100;
+            point3.y = this.h - 100;
+            point4.x = 50;
+            point4.y = this.h - 100;
+            point12.x = (point1.x + point2.x) / 2;
+            point12.y = point1.y;
+            point23.x = point2.x;
+            point23.y = (point2.y + point3.y) / 2;
+            point34.x = (point3.x + point4.x) / 2;
+            point34.y = point4.y;
+            point14.x = point1.x;
+            point14.y = (point1.y + point4.y) / 2;
+        }
+
         touchPoints.add(0, new TouchPoint(context, R.drawable.circle_touchpoint, point1, 0));
+        touchPoints.add(1, new TouchPoint(context, R.drawable.circle_touchpoint, point2, 1));
+        touchPoints.add(2, new TouchPoint(context, R.drawable.circle_touchpoint, point3, 2));
+        touchPoints.add(3, new TouchPoint(context, R.drawable.circle_touchpoint, point4, 3));
+        touchPoints.add(4, new TouchPoint(context, R.drawable.square_touchpoint, point12, 4));
+        touchPoints.add(5, new TouchPoint(context, R.drawable.square_touchpoint, point23, 5));
+        touchPoints.add(6, new TouchPoint(context, R.drawable.square_touchpoint, point34, 6));
+        touchPoints.add(7, new TouchPoint(context, R.drawable.square_touchpoint, point14, 7));
+
         touchPoints.get(0).setOtherIds(cornerIdsArray, 1, 3);
         touchPoints.get(0).setOtherIds(edgeIdsArray, 4, 7);
-
-        Point point2 = new Point();
-        point2.x = this.w - 100;
-        point2.y = 50;
-        touchPoints.add(1, new TouchPoint(context, R.drawable.circle_touchpoint, point2, 1));
         touchPoints.get(1).setOtherIds(cornerIdsArray, 0, 2);
         touchPoints.get(1).setOtherIds(edgeIdsArray, 4, 5);
-
-        Point point3 = new Point();
-        point3.x = this.w - 100;
-        point3.y = this.h - 100;
-        touchPoints.add(2, new TouchPoint(context, R.drawable.circle_touchpoint, point3, 2));
         touchPoints.get(2).setOtherIds(cornerIdsArray, 1, 3);
         touchPoints.get(2).setOtherIds(edgeIdsArray, 5, 6);
-
-        Point point4 = new Point();
-        point4.x = 50;
-        point4.y = this.h - 100;
-        touchPoints.add(3, new TouchPoint(context, R.drawable.circle_touchpoint, point4, 3));
         touchPoints.get(3).setOtherIds(cornerIdsArray, 0, 2);
         touchPoints.get(3).setOtherIds(edgeIdsArray, 7, 6);
 
-        Point point12 = new Point();
-        point12.x = (point1.x + point2.x) / 2;
-        point12.y = point1.y;
-        touchPoints.add(4, new TouchPoint(context, R.drawable.square_touchpoint, point12, 4));
-
-        Point point23 = new Point();
-        point23.x = point2.x;
-        point23.y = (point2.y + point3.y) / 2;
-        touchPoints.add(5, new TouchPoint(context, R.drawable.square_touchpoint, point23, 5));
-
-        Point point34 = new Point();
-        point34.x = (point3.x + point4.x) / 2;
-        point34.y = point4.y;
-        touchPoints.add(6, new TouchPoint(context, R.drawable.square_touchpoint, point34, 6));
-
-        Point point14 = new Point();
-        point14.x = point1.x;
-        point14.y = (point1.y + point4.y) / 2;
-        touchPoints.add(7, new TouchPoint(context, R.drawable.square_touchpoint, point14, 7));
+        if (zoneDefPoints.size() > 0) {
+            for (int x = 4; x <= 7; x++){
+                touchPoints.get(x).setIsLocked();
+            }
+        }
 
         areaFill = new Paint();
         areaLine = new Path();
 
         bitmapColor = new Paint();
-        bitmapColor.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(context, R.color.colorAccent), PorterDuff.Mode.SRC_IN));
+        bitmapColor.setColorFilter(new PorterDuffColorFilter(Color.parseColor(colorCode), PorterDuff.Mode.SRC_IN));
 
         invalidate();
+    }
+
+    private int getPositionFromPercent(int position, int XorY) {
+        if (XorY == 0) {
+            //Then it's X
+            return (position * this.w) / 10000;
+        } else {
+            //Then it's Y
+            return (position * this.h) / 10000;
+        }
     }
 
     public void clearTouchPoints() {
@@ -133,7 +169,7 @@ public class PolygonCanvas extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         if (areaFill != null) {
-            areaFill.setColor(Color.parseColor("#55FF4081"));
+            areaFill.setColor(Color.parseColor("#55" + colorCode.substring(1)));
             areaFill.setStyle(Paint.Style.FILL);
 
             areaLine.reset();
