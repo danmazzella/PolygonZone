@@ -152,6 +152,20 @@ public class PolygonCanvas extends View {
         invalidate();
     }
 
+    public JsonArray getPointCoordinates() {
+        JsonArray allPoints = new JsonArray();
+
+        for (TouchPoint touchPoint : touchPoints) {
+            JsonArray singlePoints = new JsonArray();
+            singlePoints.add(touchPoint.getMidX());
+            singlePoints.add(touchPoint.getMidY());
+
+            allPoints.add(singlePoints);
+        }
+
+        return allPoints;
+    }
+
     private int getPositionFromPercent(int position, int XorY) {
         if (XorY == 0) {
             //Then it's X
