@@ -238,8 +238,8 @@ public class PolygonCanvas extends View {
                 pointId = -1;
                 origPoint = new Point(X, Y);
                 for (TouchPoint touchPoint : touchPoints) {
-                    int centerX = touchPoint.getX() + touchPoint.getWidthOfTouchPoint();
-                    int centerY = touchPoint.getY() + touchPoint.getHeightOfTouchPoint();
+                    int centerX = touchPoint.getX();// + touchPoint.getWidthOfTouchPoint();
+                    int centerY = touchPoint.getY();// + touchPoint.getHeightOfTouchPoint();
 
                     double radCircle = Math.sqrt((double) (((centerX - X) * (centerX - X)) + (centerY - Y) * (centerY - Y)));
 
@@ -254,7 +254,7 @@ public class PolygonCanvas extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (pointId > -1) {
-                    if (X > 0 && X < this.w - touchPoints.get(pointId).getWidthOfTouchPoint()) {
+                    if (X + (touchPoints.get(pointId).getWidthOfTouchPoint()/2) > 0 && X < this.w - (touchPoints.get(pointId).getWidthOfTouchPoint()/2)) {
                         touchPoints.get(pointId).setX(X);
 
                         if (touchPoints.get(pointId).getIsCornerPoint()) {
@@ -270,7 +270,8 @@ public class PolygonCanvas extends View {
                         }
                     }
 
-                    if (Y > 0 && Y < this.h - touchPoints.get(pointId).getHeightOfTouchPoint()) {
+                    Log.d("Poly", "Y: " + Y + " and height: " + touchPoints.get(pointId).getHeightOfTouchPoint() + " and y: " + this.h);
+                    if (Y + (touchPoints.get(pointId).getHeightOfTouchPoint()/2) > 0 && Y < this.h - (touchPoints.get(pointId).getHeightOfTouchPoint()/2)) {
                         touchPoints.get(pointId).setY(Y);
 
                         if (touchPoints.get(pointId).getIsCornerPoint()) {
